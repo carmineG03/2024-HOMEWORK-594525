@@ -1,42 +1,29 @@
 package it.uniroma3.diadia.ambienti;
 
-import java.util.Iterator;
-
 import it.uniroma3.diadia.IO;
-import it.uniroma3.diadia.IOConsole;
 import it.uniroma3.diadia.Partita;
 import it.uniroma3.diadia.attrezzi.Attrezzo;
 import it.uniroma3.diadia.giocatore.Borsa;
 
-/**
- * Classe Stanza - una stanza in un gioco di ruolo. Una stanza e' un luogo
- * fisico nel gioco. E' collegata ad altre stanze attraverso delle uscite. Ogni
- * uscita e' associata ad una direzione.
- * 
- * @author docente di POO
- * @see Attrezzo
- * @version base
- */
-
-public class Stanza {
+public class StanzaProtected{
 
 	static final private int NUMERO_MASSIMO_DIREZIONI = 4;
 	static final private int NUMERO_MASSIMO_ATTREZZI = 10;
 
-	private String nome;
-	private Attrezzo[] attrezzi;
-	private int numeroAttrezzi;
-	private Stanza[] stanzeAdiacenti;
-	private int numeroStanzeAdiacenti;
-	private String[] direzioni;
-	private Borsa borsa;
+	protected String nome;
+	protected Attrezzo[] attrezzi;
+	protected int numeroAttrezzi;
+	protected Stanza[] stanzeAdiacenti;
+	protected int numeroStanzeAdiacenti;
+	protected String[] direzioni;
+	protected Borsa borsa;
 
 	/**
 	 * Crea una stanza. Non ci sono stanze adiacenti, non ci sono attrezzi.
 	 * 
 	 * @param nome il nome della stanza
 	 */
-	public Stanza(String nome) {
+	public StanzaProtected(String nome) {
 		this.nome = nome;
 		this.numeroStanzeAdiacenti = 0;
 		this.numeroAttrezzi = 0;
@@ -85,10 +72,6 @@ public class Stanza {
 	public int getNumeroAttrezzi() {
 		return this.numeroAttrezzi;
 	}
-	
-	public int getNumeroStanzeAdiacenti() {
-		return this.numeroStanzeAdiacenti;
-	}
 
 	/**
 	 * Restituisce la nome della stanza.
@@ -98,6 +81,8 @@ public class Stanza {
 	public String getNome() {
 		return this.nome;
 	}
+
+
 
 	/**
 	 * Restituisce la collezione di attrezzi presenti nella stanza.
@@ -133,88 +118,71 @@ public class Stanza {
 		boolean trovato;
 		trovato = false;
 		for (Attrezzo attrezzo : this.attrezzi) {
-			if (attrezzo != null) {
-				if (attrezzo.getNome().equals(nomeAttrezzo))
-					trovato = true;
-			}
+			if (attrezzo.getNome().equals(nomeAttrezzo))
+				trovato = true;
 		}
 		return trovato;
 	}
 
 	/**
-     * Restituisce l'attrezzo nomeAttrezzo se presente nella stanza.
+	 * Restituisce l'attrezzo nomeAttrezzo se presente nella stanza.
+	 * 
 	 * @param nomeAttrezzo
-	 * @return l'attrezzo presente nella stanza.
-     * 		   null se l'attrezzo non e' presente.
+	 * @return l'attrezzo presente nella stanza. null se l'attrezzo non e' presente.
 	 */
-    public Attrezzo getAttrezzo(String nomeAttrezzo) {
+	public Attrezzo getAttrezzo(String nomeAttrezzo) {
 		Attrezzo attrezzoCercato;
 		attrezzoCercato = null;
 		for (Attrezzo attrezzo : this.attrezzi) {
-			if(attrezzo != null)
-				if (attrezzo.getNome().equals(nomeAttrezzo))
-					attrezzoCercato = attrezzo;
+			if (attrezzo.getNome().equals(nomeAttrezzo))
+				attrezzoCercato = attrezzo;
 		}
-		return attrezzoCercato;	
+		return attrezzoCercato;
 	}
 
 	/**
 	 * Rimuove un attrezzo dalla stanza (ricerca in base al nome).
+	 * 
 	 * @param nomeAttrezzo
 	 * @return true se l'attrezzo e' stato rimosso, false altrimenti
 	 */
-	public boolean removeAttrezzo(Attrezzo attrezzo) {
-		if(attrezzo != null) {
-			int i = 0;
-			for(Attrezzo attrezz : this.attrezzi) {
-				if(attrezz != null) {
-					if(attrezz.getNome().equals(attrezzo.getNome())) {
-						for(int j = i; j<this.attrezzi.length -1; j++) {
-							this.attrezzi[j] = this.attrezzi[j+1];
-						}
-						this.numeroAttrezzi--;
-						return true;
-					}
-				}
-				i++;
+	public Attrezzo removeAttrezzo(String nomeAttrezzo) {
+		Attrezzo attrezzoRimosso = null;
+		for (int i = 0; i < this.numeroAttrezzi; i++) {
+			if (this.attrezzi[i].getNome().equals(nomeAttrezzo)) {
+				attrezzoRimosso = this.attrezzi[i];
+				this.attrezzi[i] = this.attrezzi[this.numeroAttrezzi - 1];
+				this.attrezzi[this.numeroAttrezzi - 1] = null;
+				this.numeroAttrezzi--;
+				break;
 			}
 		}
-	    
-	    return false;
+		return attrezzoRimosso;
 	}
 
 	public Borsa getBorsa() {
 		return this.borsa;
 	}
 
-	public boolean getDescrizione(IO io) {
+	
+
+	public void getDescrizione(IO io, Partita partita) {
 		io.mostraMessaggio("\nsei nella stanza: " + getNome());
-
 		io.mostraMessaggio("\nUscite: ");
-
 		String[] direzioni = new String[this.numeroStanzeAdiacenti];
 		for (int i = 0; i < this.numeroStanzeAdiacenti; i++) {
 			direzioni[i] = this.direzioni[i];
 			io.mostraMessaggio(direzioni[i]);
 		}
+		if (getNumeroAttrezzi() != 0) {
+			io.mostraMessaggio("\nAttrezzi nella stanza: ");
+			for (Attrezzo attrezzo : this.attrezzi) {
+				if (attrezzo != null)
+					io.mostraMessaggio(attrezzo.toString() + " ");
+			}
+		} else
+			io.mostraMessaggio("\nla stanza e vuota! ");
 
-		return true;
-
-	}
-	
-	public String getDirezione(int i) {
-		return this.direzioni[i];
-	}
-	
-	public void getDescrizioneAttrezzi(IO io) {
-		if(getNumeroAttrezzi() != 0) {
-	    	io.mostraMessaggio("\nAttrezzi nella stanza:");
-	    	for (Attrezzo attrezzo : getAttrezzi()) {
-	    		if(attrezzo != null)
-	    			io.mostraMessaggio(attrezzo.getNome() + " " + attrezzo.getPeso() + "Kg");
-	    	}
-	    }else
-	    	io.mostraMessaggio("\nLa stanza è vuota.");
 	}
 
 }

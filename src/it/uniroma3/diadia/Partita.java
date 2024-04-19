@@ -28,7 +28,9 @@ public class Partita {
 		giocatore= new Giocatore();
 	}
 
-    
+	public Giocatore getGiocatore() {
+		return this.giocatore;
+	} 
    
 
 	public Stanza getStanzaVincente() {
@@ -49,6 +51,10 @@ public class Partita {
 	 */
 	public boolean vinta() {
 		return this.getStanzaCorrente()== this.getStanzaVincente();
+	}
+	
+	public void setGiocatore(Giocatore giocatore) {
+		this.giocatore = giocatore;
 	}
 
 	/**

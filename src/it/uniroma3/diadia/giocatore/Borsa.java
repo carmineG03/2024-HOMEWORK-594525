@@ -1,5 +1,6 @@
 package it.uniroma3.diadia.giocatore;
 
+import it.uniroma3.diadia.IO;
 import it.uniroma3.diadia.attrezzi.Attrezzo;
 
 public class Borsa {
@@ -35,6 +36,9 @@ public class Borsa {
 
 		return a;
 	}
+	public Attrezzo getAttrezzi(int i) {
+		return this.attrezzi[i];
+	}
 	public int getPeso() {
 		int peso = 0;
 			for (int i= 0; i<this.numeroAttrezzi; i++)
@@ -64,16 +68,19 @@ public class Borsa {
 		return attrezzoRimosso;
 		}
 		
-		public String toString() {
-			StringBuilder s = new StringBuilder();
-
-			if (!this.isEmpty()) {
-				s.append("Contenuto borsa ("+this.getPeso()+"kg/"+this.getPesoMax()+"kg): ");
-				for (int i= 0; i<this.numeroAttrezzi; i++)
-					s.append(attrezzi[i].toString()+" ");
-			}
-			else
-				s.append("Borsa vuota");
-			return s.toString();
+		public int getNumeroAttrezzi() {
+			return this.numeroAttrezzi;
 		}
+		
+		public void getDescrizione(IO io) {
+			if (!isEmpty()) {
+				io.mostraMessaggio("\nContenuto borsa ("+ getPeso()+"kg/"+ getPesoMax()+"kg): ");
+				for (int i = 0; i < getNumeroAttrezzi(); i++) {
+					if(getAttrezzi(i) != null)
+						io.mostraMessaggio(getAttrezzi(i).getNome() + " ");
+				}	
+			}else
+				io.mostraMessaggio("\nLa borsa è vuota.");
+		}
+		
 }
