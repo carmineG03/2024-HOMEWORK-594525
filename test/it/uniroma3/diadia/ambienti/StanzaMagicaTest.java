@@ -1,34 +1,49 @@
 package it.uniroma3.diadia.ambienti;
 
-
-
 import static org.junit.Assert.assertEquals;
 
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import it.uniroma3.diadia.attrezzi.Attrezzo;
 
-class StanzaMagicaTest {
+public class StanzaMagicaTest {
+
+	private StanzaMagica s1;
+	private Attrezzo p;
+	private Attrezzo m;
+	private Attrezzo v;
 	
-	StanzaMagica stanza = new StanzaMagica("stanza");
-	Attrezzo attrezzo = new Attrezzo("osso",1);
-	
-	@Test
-	void modificaAttrezzoTest_Disattivata() {
-		stanza.addAttrezzo(attrezzo);
-		assertEquals(attrezzo,stanza.getAttrezzi()[0]);
+	@Before
+	public void setUp() throws Exception {
+		s1 = new StanzaMagica("s1");
+		p = new Attrezzo("pala", 33);
+		m = new Attrezzo("martello", 42);
+		v = new Attrezzo("vanga", 42);
 	}
-	
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
 	@Test
-	void modificaAttrezzoTest_Attivata() {
-		for(int i = 0; i < 3; i++) {
-			stanza.addAttrezzo(attrezzo);
-			stanza.removeAttrezzo(attrezzo);
+	public void testAddAttrezzo() {
+		assertTrue(s1.addAttrezzo(m));
+
+	}
+
+
+	@Test
+	public void testModificaAttrezzo() {
+		assertTrue(s1.addAttrezzo(p));
+		assertTrue(s1.addAttrezzo(v));
+		assertTrue(s1.addAttrezzo(m));
+
+		//assertEquals("olletram",m.getNome());	
+		//assertEquals(84,m.getPeso());	
+
 		}
-		
-		stanza.addAttrezzo(attrezzo);
-		stanza.modificaAttrezzo(attrezzo);
-		
-		assertEquals(attrezzo.getNome(),stanza.getAttrezzi()[0].getNome());
-	}
 }

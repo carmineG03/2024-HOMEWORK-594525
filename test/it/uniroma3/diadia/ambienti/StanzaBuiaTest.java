@@ -2,28 +2,35 @@ package it.uniroma3.diadia.ambienti;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import it.uniroma3.diadia.IO;
-import it.uniroma3.diadia.IOConsole;
 
 import it.uniroma3.diadia.attrezzi.Attrezzo;
 
 public class StanzaBuiaTest {
 
-	StanzaBuia stanzaBuia = new StanzaBuia("aulaN11", "key");
-	Attrezzo AttrezzoKey = new Attrezzo("key", 1);
-	IO io = new IOConsole();
+	private StanzaBuia stanza;
+	private Attrezzo lumino;
+	@Before
+	public void setUp() throws Exception {
+		stanza = new StanzaBuia("StanzaBuia", "lumino");
+		lumino = new Attrezzo("lumino", 1);
+	}
 
-	@Test
-	public void testGetDescrizione_SenzaAttrezzo() {
-		assertFalse(this.stanzaBuia.getDescrizione(io));
+	@After
+	public void tearDown() throws Exception {
 	}
 
 	@Test
-	public void testGetDescrizione_ConAttrezzo() {
-		stanzaBuia.addAttrezzo(AttrezzoKey);
-		assertTrue(this.stanzaBuia.getDescrizione(io));
+	public void testGetDescrizioneConAttrezzo() {
+		stanza.addAttrezzo(lumino);
+		assertEquals(stanza.toString(), stanza.getDescrizione());
 	}
-
+	
+	@Test
+	public void testGetDescrizioneSenzaAttrezzo() {
+		String e = "qui c'è un buio pesto";
+		assertEquals(e, stanza.getDescrizione());
+	}
 }
