@@ -1,35 +1,139 @@
 package it.uniroma3.diadia.ambienti;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import it.uniroma3.diadia.attrezzi.*;
 
-import it.uniroma3.diadia.ambienti.Stanza;
-import it.uniroma3.diadia.attrezzi.Attrezzo;
+class StanzaTest {
+	private Labirinto labirinto;
 
-public class StanzaTest {	
+	@BeforeEach
+	void setUp(){	
+		this.labirinto = new Labirinto.LabirintoBuilder()
+				.addStanza("Stanza test")
+				.addAttrezzo("Martello", 8)
+				.addAttrezzo("Ascia", 1)
+				.addAttrezzo("Mouse", 9)
+				.setComeStanzaIniziale("Stanza test")
+				.addStanza("Stanza nord")
+				.addStanza("Stanza sud")
+				.addStanza("Stanza est")
+				.addStanza("Stanza ovest")
+				.addAdiacenza("Stanza test", "Stanza nord", Direzione.nord)
+				.addAdiacenza("Stanza test", "Stanza sud", Direzione.sud)
+				.addAdiacenza("Stanza test", "Stanza est", Direzione.est)
+				.addAdiacenza("Stanza test", "Stanza ovest", Direzione.ovest)
+				.getLabirinto();
+	}
 
-	Stanza s1 = new Stanza("s1");
-	Stanza s2= new Stanza("s2");
-	Attrezzo m = new Attrezzo("martello", 42);
+	/**
+	 * Test getStanzaAdiacente
+	 */
+
 	@Test
-	public void testGetStanzaAdiacente() {
-		assertNull(s1.getStanzaAdiacente("sud"));
+	void testGetStanzaAdiacenteNord() { 
+		assertEquals("Stanza nord", this.labirinto.getStanzaIniziale().getStanzaAdiacente(Direzione.nord).getNome());
+	} 
+
+	@Test
+	void testGetStanzaAdiacenteSud() { 
+		assertEquals("Stanza sud", this.labirinto.getStanzaIniziale().getStanzaAdiacente(Direzione.sud).getNome());
+	}
+
+	@Test
+	void testGetStanzaAdiacenteEst() { 
+		assertEquals("Stanza est", this.labirinto.getStanzaIniziale().getStanzaAdiacente(Direzione.est).getNome());
+	}
+
+	@Test
+	void testGetStanzaAdiacenteOvest() { 
+		assertEquals("Stanza ovest", this.labirinto.getStanzaIniziale().getStanzaAdiacente(Direzione.ovest).getNome());
 	}
 	
 
+	/**
+	 * Test hasAttrezzo    
+	 */
+
+
 	@Test
-	public void testImpostaStanzaAdiacente() {
-		s1.impostaStanzaAdiacente("sud", s2);
-		assertEquals(s2, s1.getStanzaAdiacente("sud"));
+	void testHasAttrezzoTrue() {
+		assertTrue(this.labirinto.getStanzaIniziale().hasAttrezzo("Martello"));
+		assertTrue(this.labirinto.getStanzaIniziale().hasAttrezzo("Ascia"));
+		assertTrue(this.labirinto.getStanzaIniziale().hasAttrezzo("Mouse"));
 	}
-	
+
 	@Test
-	public void testAddAttrezzo() {
-		
-		assertTrue(s1.addAttrezzo(m));
+	void testHasAttrezzoFalse() {
+		assertFalse(this.labirinto.getStanzaIniziale().hasAttrezzo("Iphone 150xs-pro-max-air-13 pollici"));
 	}
-	
+
+	/**
+	 * Test getAttrezzo    
+	 */
+
+	@Test
+	void testGetAttrezzoEsistente() {
+		assertEquals("Martello", this.labirinto.getStanzaIniziale().getAttrezzo("Martello").getNome());
+		assertEquals("Ascia", this.labirinto.getStanzaIniziale().getAttrezzo("Ascia").getNome());
+		assertEquals("Mouse", this.labirinto.getStanzaIniziale().getAttrezzo("Mouse").getNome());
+	}
+
+	@Test
+	void testGetAttrezzoNonEsistente() {
+		assertNull(this.labirinto.getStanzaIniziale().getAttrezzo("Spada"));
+		assertNull(this.labirinto.getStanzaIniziale().getAttrezzo("Resilienza"));
+		assertNull(this.labirinto.getStanzaIniziale().getAttrezzo("Dominio"));
+	}
+
+
+	/**
+	 * Test removeAttrezzo    
+	 */
+
+	@Test
+	void testRemoveAttrezzoTrovato() {
+		assertFalse(this.labirinto.getStanzaIniziale().getAttrezzi().isEmpty());
+		assertTrue(this.labirinto.getStanzaIniziale().removeAttrezzoDaStanza(new Attrezzo("Martello", 8)));
+		assertTrue(this.labirinto.getStanzaIniziale().removeAttrezzoDaStanza(new Attrezzo("Ascia", 1)));
+		assertTrue(this.labirinto.getStanzaIniziale().removeAttrezzoDaStanza(new Attrezzo("Mouse", 9)));
+		assertTrue(this.labirinto.getStanzaIniziale().getAttrezzi().isEmpty());
+	}
+
+	@Test
+	void testRemoveAttrezzoNonTrovato() {
+		assertFalse(this.labirinto.getStanzaIniziale().removeAttrezzoDaStanza(new Attrezzo("pugnale del vicoletto", 4)));
+	}
+
+	/**
+	 * Test addAttrezzo    
+	 */
+
+	@Test
+	void testAddAttrezzoTrue() {
+		assertTrue(this.labirinto.getStanzaIniziale().addAttrezzo(new Attrezzo ("Galeforce", 6)));
+	}
+
+	@Test
+	void testAddAttrezzoFalse() {
+		assertFalse(this.labirinto.getStanzaIniziale().addAttrezzo(new Attrezzo("Martello", 8)));
+		assertFalse(this.labirinto.getStanzaIniziale().addAttrezzo(new Attrezzo("Martello", 1)));
+		assertFalse(this.labirinto.getStanzaIniziale().addAttrezzo(null));
+	}
+
+	@Test
+	void testAddAttrezzoFalseStanzaPiena() {
+		this.labirinto.getStanzaIniziale().addAttrezzo(new Attrezzo ("Galeforce", 6));
+		this.labirinto.getStanzaIniziale().addAttrezzo(new Attrezzo ("Baron Nashor", 4));
+		this.labirinto.getStanzaIniziale().addAttrezzo(new Attrezzo ("Immortal Cringebow", 6));
+		this.labirinto.getStanzaIniziale().addAttrezzo(new Attrezzo ("Rabadon", 6));
+		this.labirinto.getStanzaIniziale().addAttrezzo(new Attrezzo ("Rylai", 6));
+		this.labirinto.getStanzaIniziale().addAttrezzo(new Attrezzo ("Collector", 6));
+		this.labirinto.getStanzaIniziale().addAttrezzo(new Attrezzo ("Infinity Edge", 6));
+		assertTrue(this.labirinto.getStanzaIniziale().addAttrezzo(new Attrezzo ("Piastrella", 4)));
+	}
 
 }

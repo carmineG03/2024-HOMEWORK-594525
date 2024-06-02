@@ -1,81 +1,50 @@
 package it.uniroma3.diadia.comandi;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import it.uniroma3.diadia.ambienti.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Set;
+import java.util.Scanner;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import it.uniroma3.diadia.IO;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import it.uniroma3.diadia.*;
 import it.uniroma3.diadia.IOConsole;
-import it.uniroma3.diadia.Partita;
-import it.uniroma3.diadia.ambienti.Labirinto;
-import it.uniroma3.diadia.ambienti.LabirintoBuilder;
-import it.uniroma3.diadia.attrezzi.Attrezzo;
 
-public class ComandoPrendiTest {
-
-	private Partita partita;
-	private Attrezzo attrezzo;
-	private Attrezzo attrezzoPesante;
-	private Attrezzo attrezzoNull;
-	private Comando comando;
+class ComandoPrendiTest {
+	
+	private ComandoPrendi comandoPrendi;
+	private FabbricaDiComandi fabbricaDiComandi;
 	private IO io;
-	Labirinto labirinto;
+	private Labirinto labirinto;
+	private DiaDia diaDia;
 	
-	@Before
-	public void setUp() throws Exception {
-		labirinto = new LabirintoBuilder()
-				.addStanzaIniziale("Atrio")
-				.addAttrezzo("martello", 3)
-				.addStanzaVincente("Biblioteca")
-				.addAdiacenza("Atrio", "Biblioteca", "nord")
+	@BeforeEach
+	void setUp() {
+		this.io = new IOConsole(new Scanner(System.in));
+		this.fabbricaDiComandi = new FabbricaDiComandiRiflessiva();
+		this.comandoPrendi = (ComandoPrendi)fabbricaDiComandi.costruisciComando("prendi Kiodo");
+		this.labirinto = new Labirinto.LabirintoBuilder()
+				.addStanzaIniziale("A")
+				.addAttrezzo("Kiodo", 1)
 				.getLabirinto();
-		partita = new Partita(labirinto);
-		attrezzo = new Attrezzo("martello", 2);
-		attrezzoPesante = new Attrezzo("incudine", 11);
-		attrezzoNull = null;
-		comando = new ComandoPrendi();
-		io = new IOConsole();
-		comando.setIo(io);
+		this.diaDia = new DiaDia(labirinto, io);
 	}
 
-
-	@After
-	public void tearDown() throws Exception {
-	}
-	
-	public boolean attrezzoPresente(String s) {
-		//Set<Attrezzo> set = partita.getStanzaCorrente().getAttrezzi();
-		if(partita.getStanzaCorrente().getAttrezzo(s)==null)
-			return false;
-		return true;
-		}
-	
 	@Test
-	public void testAttrezzoPreso() {
-		partita.getStanzaCorrente().addAttrezzo(attrezzo);
-		comando.setParametro("martello");
-		comando.esegui(partita);
-		assertFalse(attrezzoPresente("martello"));
+	void testEsegui() {
+		assertTrue(this.labirinto.getStanzaIniziale().hasAttrezzo("Kiodo"));
+		this.comandoPrendi.esegui(this.diaDia.getPartita(), io);
+		assertEquals("Kiodo", this.diaDia.getPartita().getGiocatore().getBorsa().getAttrezzo("Kiodo").getNome());
+		assertFalse(this.diaDia.getPartita().getStanzaCorrente().hasAttrezzo("Kiodo"));
 	}
 	
 	@Test
-	public void testAttrezzoNonPresente() {
-		comando.setParametro("martello");
-		comando.esegui(partita);
-		assertFalse(attrezzoPresente("martello"));
+	void testSetParametro() {
+		assertEquals("Kiodo", this.comandoPrendi.getParametro());
 	}
 	
 	@Test
-	public void testAttrezzoPesante() {
-		partita.getStanzaCorrente().addAttrezzo(attrezzoPesante);
-		comando.setParametro("incudine");
-		comando.esegui(partita);
-		assertTrue(attrezzoPresente("incudine"));
+	void testGetNome() {
+		assertEquals("prendi", this.comandoPrendi.getNome());
 	}
-	
 }

@@ -1,49 +1,35 @@
 package it.uniroma3.diadia.ambienti;
+import it.uniroma3.diadia.attrezzi.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+class StanzaMagicaTest {
+	private StanzaMagica stanza;
+	private Attrezzo attrezzo;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+	@BeforeEach
+	void setUp() throws Exception {
+		this.attrezzo = new Attrezzo("palla", 2);
+		this.stanza = new StanzaMagica("magica", 2);
+	}
 
-import it.uniroma3.diadia.attrezzi.Attrezzo;
-
-public class StanzaMagicaTest {
-
-	private StanzaMagica s1;
-	private Attrezzo p;
-	private Attrezzo m;
-	private Attrezzo v;
+	@Test
+	void testAddAttrezzoNonMagico() {
+		this.stanza.addAttrezzo(attrezzo);
+		assertTrue(this.stanza.hasAttrezzo("palla"));
+		assertFalse(this.stanza.hasAttrezzo("Falange"));
+	}
 	
-	@Before
-	public void setUp() throws Exception {
-		s1 = new StanzaMagica("s1");
-		p = new Attrezzo("pala", 33);
-		m = new Attrezzo("martello", 42);
-		v = new Attrezzo("vanga", 42);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
-
+	
 	@Test
-	public void testAddAttrezzo() {
-		assertTrue(s1.addAttrezzo(m));
-
+	void testAddAttrezzoMagico() {
+		this.stanza.addAttrezzo(new Attrezzo("Topo", 5));
+		this.stanza.addAttrezzo(new Attrezzo("Lale", 1));
+		this.stanza.addAttrezzo(attrezzo);
+		assertTrue(this.stanza.hasAttrezzo("allap"));
+		assertFalse(this.stanza.hasAttrezzo("palla"));
 	}
 
-
-	@Test
-	public void testModificaAttrezzo() {
-		assertTrue(s1.addAttrezzo(p));
-		assertTrue(s1.addAttrezzo(v));
-		assertTrue(s1.addAttrezzo(m));
-
-		//assertEquals("olletram",m.getNome());	
-		//assertEquals(84,m.getPeso());	
-
-		}
 }

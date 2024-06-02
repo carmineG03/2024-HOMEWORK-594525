@@ -1,56 +1,79 @@
 package it.uniroma3.diadia;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 public class IOSimulator implements IO {
 
-	private List<String> righeLette;
-	private int indiceRigheLette;
+	private Map<String, String> rigaLetta2msgProdotti;
+	private List<String> comandiDaIniettare;
+	private List<String> comandiStampati;
+	private int indiceAttuale;
+	private String comandoAppenaLetto;
 
-	public List<String> getMessaggiProdotti() {
-		return messaggiProdotti;
+	public IOSimulator () {
+		this.rigaLetta2msgProdotti = new HashMap<>();	
+		this.comandiDaIniettare = new ArrayList<>();
+		this.indiceAttuale = 0;
+		this.comandoAppenaLetto = null;
+		this.comandiStampati = new ArrayList<>();
 	}
 
-	public void setMessaggiProdotti(List<String> messaggiProdotti) {
-		this.messaggiProdotti = messaggiProdotti;
-	}
-
-	//forse si potrebbe inserire una mappa al posto della lista per ricordare ogni riga letta quale messaggi abbia prodotto
-	private List<String> messaggiProdotti;
-	private int indiceMessaggiProdotti;
-	private int indiceMessaggiMostrati;
-
-	public IOSimulator(List<String> righeDaLeggere) {
-		this.righeLette = righeDaLeggere;
-		this.indiceRigheLette = 0;
-		this.indiceMessaggiMostrati = 0;
-		this.messaggiProdotti = new ArrayList<String>();
+	@Override
+	public void mostraMessaggio(String messaggio) {
+		this.rigaLetta2msgProdotti.put(comandoAppenaLetto, messaggio);
+		this.comandiStampati.add(messaggio);
 	}
 
 	@Override
 	public String leggiRiga() {
-		String riga = null;
-
-		riga = this.righeLette.get(indiceRigheLette);
-		this.indiceRigheLette++;
+		this.comandoAppenaLetto = comandiDaIniettare.get(this.indiceAttuale);
+		Scanner scannerDiLinee = new Scanner(this.comandoAppenaLetto);
+		try {
+		String riga = scannerDiLinee.nextLine();
 		return riga;
+		} finally { scannerDiLinee.close(); }
 	}
 
-	@Override
-	public void mostraMessaggio(String msg) {
-		this.messaggiProdotti.add(this.indiceMessaggiProdotti, msg);
-		this.indiceMessaggiProdotti++;
+	public Map<String, String> getRigaLetta2msgProdotti() {
+		return rigaLetta2msgProdotti;
 	}
 
-	public String nextMessaggio() {
-		String next = this.messaggiProdotti.get(indiceMessaggiMostrati);
-		this.indiceMessaggiMostrati++;
-		return next;
+	public List<String> getComandiDaIniettare() {
+		return comandiDaIniettare;
 	}
 
-	public boolean hasNextMessaggio() {
-		return this.indiceMessaggiMostrati < this.indiceMessaggiProdotti;
+	public List<String> getComandiStampati() {
+		return comandiStampati;
 	}
 
+	public int getIndiceAttuale() {
+		return indiceAttuale;
+	}
+
+	public String getComandoAppenaLetto() {
+		return comandoAppenaLetto;
+	}
+
+	public void setRigaLetta2msgProdotti(Map<String, String> rigaLetta2msgProdotti) {
+		this.rigaLetta2msgProdotti = rigaLetta2msgProdotti;
+	}
+
+	public void setComandiDaIniettare(List<String> comandiDaIniettare) {
+		this.comandiDaIniettare = comandiDaIniettare;
+	}
+
+	public void setComandiStampati(List<String> comandiStampati) {
+		this.comandiStampati = comandiStampati;
+	}
+
+	public void setIndiceAttuale(int indiceAttuale) {
+		this.indiceAttuale = indiceAttuale;
+	}
+
+	public void setComandoAppenaLetto(String comandoAppenaLetto) {
+		this.comandoAppenaLetto = comandoAppenaLetto;
+	}
 }

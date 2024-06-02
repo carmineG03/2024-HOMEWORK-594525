@@ -1,27 +1,33 @@
 package it.uniroma3.diadia.giocatore;
-import static org.junit.Assert.*;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import it.uniroma3.diadia.giocatore.Giocatore;
-
-public class GiocatoreTest {
+class GiocatoreTest {
+	static final private int CFU_INIZIALI = 20;
+	private Giocatore giocatore;
 	
-	Giocatore g = new Giocatore();
+	@BeforeEach
+	void setUp() {
+		this.giocatore = new Giocatore();
+	}
+	
 	
 	@Test
-	public void testGetCfuDefault() {
-		assertEquals(20, g.getCfu());
+	void testGetBorsa() {
+		assertEquals(0, this.giocatore.getBorsa().getPeso()); //se la borsa è vuota, ha funzionato
 	}
 	
 	@Test
-	public void testSetCfu() {
-		g.setCfu(3);
-		assertEquals(3, g.getCfu());
+	void testGetCfu() {
+		assertEquals(CFU_INIZIALI, this.giocatore.getCfu());
+	}
+	
+	@Test
+	void testGetNome() {
+		this.giocatore.setNome("Francolo");
+		assertEquals("Francolo", this.giocatore.getNome());
 	}
 
-	@Test
-	public void testGetBorsaDefault() {
-		assertNotNull(g.getBorsa());
-	}
 }
