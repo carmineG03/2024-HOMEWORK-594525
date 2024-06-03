@@ -51,6 +51,9 @@ public class DiaDia {
 		return partita;
 	}
 
+	/**
+	 * A ripetizione chiede istruzioni finché la partita non finisce.
+	 */
 
 	public void gioca() { 
 		String istruzione;
@@ -59,7 +62,7 @@ public class DiaDia {
 			ioconsole.mostraMessaggio("\n---Inserire un comando valido---\n");
 			istruzione = ioconsole.leggiRiga();
 		}
-		while (!processaIstruzione(istruzione)); 
+		while (!processaIstruzione(istruzione)); //se non ho ancora vinto. processaIstruzione ritorna vero se ho vinto o se scrivo "fine".
 	}
 
 	/**
@@ -73,7 +76,7 @@ public class DiaDia {
 		AbstractComando comandoDaEseguire;
 		FabbricaDiComandi factory = new FabbricaDiComandiRiflessiva();
 		comandoDaEseguire = factory.costruisciComando(istruzione);
-		comandoDaEseguire.esegui(this.partita, this.ioconsole); 
+		comandoDaEseguire.esegui(this.partita, this.ioconsole); //chiamata polimorfa a un metodo "esegui"
 		if (this.partita.vinta())
 			ioconsole.mostraMessaggio("Hai vinto!");
 		if (!this.partita.giocatoreIsVivo())
@@ -82,6 +85,8 @@ public class DiaDia {
 	}
 
 	public static void main(String[] argc) throws FileNotFoundException, FormatoFileNonValidoException {
+		/* N.B. unica istanza di IOConsole
+		di cui sia ammessa la creazione */
 		Scanner sc = new Scanner(System.in);
 		IO io = new IOConsole(sc);
 		Labirinto labirinto = Labirinto.newBuilder("labirinto.txt").getLabirinto();
